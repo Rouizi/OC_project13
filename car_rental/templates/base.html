@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>{{ title }} - BooshCar</title>
+
+    {% if description %}
+    <meta name="description" content="{{ description }}">
+    {% endif %}
+
+    {% load static %}
+    <link rel="icon" href="{% static 'img/car.png' %}">
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <script src="https://kit.fontawesome.com/ad6328b9e0.js"></script>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'booking/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'users/css/style.css' %}">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="https://getbootstrap.com/docs/3.3/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="https://getbootstrap.com/docs/3.3/assets/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body> 
+
+    <!--NAVIGATION BAR-->
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">BooshCar Reservation</a>
+        </div>
+        <ul class="nav navbar-nav pull-right">
+          {% if user.is_authenticated %}
+            <li><a class="click1" href="#">Create deal</a></li>
+            <li><a class="click2" href="#">Reservations</a></li>
+            <li><a class="click3" href="#">Requests</a></li>
+            <li><a class="click4" href="#">Profile</a></li>
+            <li><a class="click5" href="{% url 'users:log_out' %}">Logout</a></li>
+          {% else %}
+            <li><a class="click6" href="{% url 'users:log_in' %}">Login</a></li>
+            <li><a class="click7" href="{% url 'users:signup' %}">Register</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+
+    <!--HEADER-->
+    <header class="container">
+    {% if messages %}
+      {% for message in messages %}
+        <div class='row'>
+            <div {% if message.tags == 'error' %} class="alert alert-danger col-xs-9 message"{% else %}class="alert alert-success col-xs-9 message"{% endif %} role="alert">{{ message }}</div>
+        </div>
+      {% endfor %}
+    {% endif %}
+    </header>
+
+    <!--SECTION-->
+    <section class="container home">
+      {% block head %}{% endblock %}
+      {% block content %}
+      {% endblock %}
+    </section>
+
+    <!--FOOTER-->
+    <footer class="navbar-fixed-bottom">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-xs-3 footer-contact"><a href="#">Legal notice</a></div>
+          <div class="col-xs-offset-1 col-xs-3 footer-contact"><a href="mailto:cinorouizi@hotmail.fr">Contact</a></div>
+          <div class="col-xs-offset-1 col-xs-3 footer-contact"><a href="https://github.com/Rouizi/OC_project13">Source code</a></div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="https://getbootstrap.com/docs/3.3/assets/js/ie10-viewport-bug-workaround.js"></script>
+    <script>
+      $(function () {
+        {% if title == 'Create deal' %}
+          $(this).css('background-color', 'rgb(221, 221, 221)').css('color', 'rgb(80, 80, 80)').css('border-bottom', '4px solid #607080');
+          $('.click2, .click3, .click4, .click5, .click6, .click7').css('background-color', '#343a40');
+        {% elif title == 'Reservations' %}
+          $('.click2').css('background-color', 'rgb(221, 221, 221)').css('color', 'rgb(80, 80, 80)').css('border-bottom', '4px solid #607080');
+          $('.click1, .click3, .click4, .click5, .click6, .click7').css('background-color', '#343a40');
+        {% elif title == 'Requests' %}
+          $('.click3').css('background-color', 'rgb(221, 221, 221)').css('color', 'rgb(80, 80, 80)').css('border-bottom', '4px solid #607080');
+          $('.click2, .click1, .click4, .click5, .click6, .click7').css('background-color', '#343a40');
+        {% elif title == 'Profile' %}
+          $('.click4').css('background-color', 'rgb(221, 221, 221)').css('color', 'rgb(80, 80, 80)').css('border-bottom', '4px solid #607080');
+          $('.click2, .click3, .click1, .click5, .click6, .click7').css('background-color', '#343a40');
+        {% elif title == 'Login' %}
+          $('.click6').css('background-color', 'rgb(221, 221, 221)').css('color', 'rgb(80, 80, 80)').css('border-bottom', '4px solid #607080');
+          $('.click2, .click3, .click4, .click5, .click1, .click7').css('background-color', '#343a40');
+        {% elif title == 'Signup' %}
+          $('.click7').css('background-color', 'rgb(221, 221, 221)').css('color', 'rgb(80, 80, 80)').css('border-bottom', '4px solid #607080');
+          $('.click2, .click3, .click4, .click5, .click6, .click1').css('background-color', '#343a40');
+        {% endif %}
+           
+      });
+    </script>
+  </body>
+</html>

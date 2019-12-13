@@ -1,0 +1,10 @@
+.signup{
+    margin-top: 15px;
+}
+.submit{
+    margin: 15px;
+    width: 7%;
+}
+.error{
+    color: rgb(214, 41, 41);
+}

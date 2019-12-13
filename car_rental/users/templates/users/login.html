@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  <div>
+    <h2>Login</h2>
+    <hr>
+  </div>
+{% endblock %}
+
+{% block content %}
+  {% if error %}
+  <div class="row">
+    <p class="col-xs-12 error">Invalid username or password.</p>
+  </div>
+  {% endif %}
+
+  <form class="row" method="post">
+    {% csrf_token %}
+    {% for field in form %}
+      <p class="col-xs-12">
+        {{ field.label_tag }}<br>
+        {{ field }}
+      </p>
+    {% endfor %}
+    <input class="btn btn-primary submit" type="submit" value="Login" />
+  </form>
+  <hr>
+  <div class="row">
+    <p class="col-xs-12">New user? 
+      <a href="{% url 'users:signup' %}">Click to Register!</a>
+    </p>
+  </div>
+{% endblock %}
