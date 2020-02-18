@@ -13,11 +13,6 @@ body{
 .navbar-default .navbar-nav > li > a:hover{
     color: rgb(80, 80, 80);
 }
-.home{
-    background-color: white;
-    border: 1px solid rgb(189, 189, 189);
-    margin-bottom: 15px;
-}
 footer{
     background-color: #b6b6b6;
     border: 1px solid rgb(163, 163, 163);

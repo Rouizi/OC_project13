@@ -3,8 +3,15 @@
 }
 .submit{
     margin: 15px;
-    width: 7%;
 }
 .error{
     color: rgb(214, 41, 41);
+}
+.avatar{
+    margin-right: 25px;
+}
+.profile_image{
+    width: 250px;
+    height: 250px;
+    margin-right: 25px;
 }

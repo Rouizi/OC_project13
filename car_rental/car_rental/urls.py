@@ -22,7 +22,7 @@ from django.conf.urls import include, url
 
 urlpatterns = [
     # For security reasons, it is essential to change the admin URL because hackers know it
-    path('adminnw98@n*/$$}kùqa^l&d^m.zw/', admin.site.urls),
+    path('adminnw98@nE/89Lk4qa8l&dfm,zw/', admin.site.urls),
     url(r'^$', views.index, name="index"),
     url(r'^booking/', include(('booking.urls', 'booking'), namespace='booking')),
     url(r'^users/', include(('users.urls', 'users'), namespace='users')),

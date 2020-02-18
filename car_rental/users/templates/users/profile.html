@@ -1,12 +1,38 @@
 {% extends 'base.html' %}
 
 {% block head %}
-<div>
-  <h2>Profile</h2>
-  <hr>
-</div>
 {% endblock %}
 
 {% block content %}
-
+  <hr>
+  <table>
+    <tr valign="top">
+      <td >
+        {% if user_has_profile_image %}
+          {% for p in profile %}
+            <img class="profile_image" src="{{ p.profile_image.url }}" alt="profile_image">
+          {% endfor %}
+        {% else %}
+          <img class="avatar" src="{{ avatar }}" alt="avatar">
+        {% endif %}
+      </td>
+      <td>
+        <h1>User: {{ profile_user.username }}</h1>
+        <p>Last seen on: {{ profile_user.last_login }}</p>
+        <p>Email: {{ profile_user.email }}</p>
+        {% for p in profile %}
+          {% if p.phone_number != None and p.phone_number != '' %}<p>Phone number: {{ p.phone_number }}</p>{% endif %}
+          {% if p.location != None and p.location != '' %}<p>Location: {{ p.location }}</p>{% endif %}
+        {% endfor %}
+        <!--We check If the user is consulting her profile or not-->
+        {% if user == profile_user %}
+          <p><a href='{% url "users:edit_profile" %}' >Edit your profile</a></p>
+        {% else %}
+          <p><a href="#">Send private message</a></p>
+        {% endif %}
+      </td>
+    </tr>
+  </table>
+  <hr>
+  
 {% endblock %}

@@ -8,18 +8,8 @@ class SignUpForm(UserCreationForm):
     
     def __init__(self, *args, **kwargs):
         super(SignUpForm, self).__init__(*args, **kwargs)
-        self.fields['username'].widget.attrs.update({
-            'class': 'form-control',
-            "name":"username"})
-        self.fields['email'].widget.attrs.update({
-            'class': 'form-control',
-            "name": "email"})
-        self.fields['password1'].widget.attrs.update({
-		    'class': 'form-control',
-		    "name":"password1"})
-        self.fields['password2'].widget.attrs.update({
-            'class': 'form-control',
-            "name": "password2"})
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
 
     # I added this function so that the email is unique
     def clean_email(self):
@@ -41,25 +31,24 @@ class ConnexionForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super(ConnexionForm, self).__init__(*args, **kwargs)
-        self.fields['username'].widget.attrs.update({
-            'class': 'form-control',
-            "name":"username"})
-        self.fields['password'].widget.attrs.update({
-            'class': 'form-control',
-            "name": "password"})
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
         
 
-class ProfileForm(forms.Form):
+class EditProfileForm(forms.Form):
     username = forms.CharField(label="Username*")
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$',
-                                 message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
-    phone_number = forms.CharField(label='Phone', validators=[phone_regex], max_length=17, blank=True) # validators should be a list 
-    location = forms.CharField(label='Location', max_length=100)
-    profile_image = forms.ImageField(label="Image")
+                                message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
+    phone_number = forms.CharField(label='Phone', validators=[phone_regex], max_length=17, required=False) # validators should be a list 
+    location = forms.CharField(label='Location', max_length=100, required=False)
+    profile_image = forms.ImageField(label="Image", required=False)
 
     def __init__(self, original_username, *args, **kwargs):
-        super(ProfileForm, self).__init__(*args, **kwargs)
+        super(EditProfileForm, self).__init__(*args, **kwargs)
         self.original_username = original_username
+        for field_name, field in self.fields.items():
+            if field != self.fields['profile_image']:
+                field.widget.attrs['class'] = 'form-control'
 
 
     # This function ensures that when the user changes his username, he does not take the one of another

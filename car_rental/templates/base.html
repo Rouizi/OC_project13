@@ -6,7 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>{{ title }} - BooshCar</title>
+    <title>
+      {% if title %}
+        {{ title }} - BooshCar
+      {% else %}
+        Welcome to BooshCar
+      {% endif %}
+    </title>
 
     {% if description %}
     <meta name="description" content="{{ description }}">
@@ -45,20 +51,27 @@
     <div class="navbar navbar-default navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
-          <a class="navbar-brand" href="#">BooshCar Reservation</a>
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'index' %}">BooshCar Reservation</a>
         </div>
-        <ul class="nav navbar-nav pull-right">
-          {% if user.is_authenticated %}
-            <li><a class="click1" href="#">Create deal</a></li>
-            <li><a class="click2" href="#">Reservations</a></li>
-            <li><a class="click3" href="#">Requests</a></li>
-            <li><a class="click4" href="#">Profile</a></li>
-            <li><a class="click5" href="{% url 'users:log_out' %}">Logout</a></li>
-          {% else %}
-            <li><a class="click6" href="{% url 'users:log_in' %}">Login</a></li>
-            <li><a class="click7" href="{% url 'users:signup' %}">Register</a></li>
-          {% endif %}
-        </ul>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            {% if user.is_authenticated %}
+              <li><a href="{% url 'booking:create_deal' %}">Create deal</a></li>
+              <li><a href="#">Reservations</a></li>
+              <li><a href="#">Requests</a></li>
+              <li><a href="{% url 'users:profile' user.username %}">Profile</a></li>
+              <li><a href="{% url 'users:log_out' %}">Logout</a></li>
+            {% else %}
+              <li><a href="{% url 'users:log_in' %}">Login</a></li>
+              <li><a href="{% url 'users:signup' %}">Register</a></li>
+            {% endif %}
+          </ul>
+        </div>
       </div>
     </div>
 
@@ -75,8 +88,35 @@
 
     <!--SECTION-->
     <section class="container home">
-      {% block head %}{% endblock %}
+      {% block head %}
+        <h1>berbererberb</h1>
+        <hr>
+      {% endblock %}
       {% block content %}
+      <div class="row">
+        <div class="col-xs-3">
+          <h2 class="col-xs-12">Categories</h2>
+          <ul class="list-group col-xs-12">
+            <li class="list-group-item"><a>Display all</a></li>
+            <li class="list-group-item"><a>Display by location</a></li>
+            <li class="list-group-item"><a>Increasing price</a></li>
+            <li class="list-group-item"><a>Increasing mileage</a></li>
+          </ul>
+        </div>
+
+        <div class="col-xs-9">
+          <div class="row">
+            <h2 class="col-xs-12">Deals</h2>
+          </div>
+          {% for deal in all_deals %}
+            <div class="row" style="border: 1px solid black; margin-bottom: 10px">
+              <img class="col-xs-4" style="margin-bottom: 10px; margin-top: 10px" src="{{ deal.car_picture.url }}" alt="deal.id" />
+              <div class="col-xs-8">hgn gh</div>
+            </div> 
+          {% endfor %}
+        </div>
+      </div>
+        
       {% endblock %}
     </section>
 
@@ -100,26 +140,9 @@
     <script src="https://getbootstrap.com/docs/3.3/assets/js/ie10-viewport-bug-workaround.js"></script>
     <script>
       $(function () {
-        {% if title == 'Create deal' %}
-          $(this).css('background-color', 'rgb(221, 221, 221)').css('color', 'rgb(80, 80, 80)').css('border-bottom', '4px solid #607080');
-          $('.click2, .click3, .click4, .click5, .click6, .click7').css('background-color', '#343a40');
-        {% elif title == 'Reservations' %}
-          $('.click2').css('background-color', 'rgb(221, 221, 221)').css('color', 'rgb(80, 80, 80)').css('border-bottom', '4px solid #607080');
-          $('.click1, .click3, .click4, .click5, .click6, .click7').css('background-color', '#343a40');
-        {% elif title == 'Requests' %}
-          $('.click3').css('background-color', 'rgb(221, 221, 221)').css('color', 'rgb(80, 80, 80)').css('border-bottom', '4px solid #607080');
-          $('.click2, .click1, .click4, .click5, .click6, .click7').css('background-color', '#343a40');
-        {% elif title == 'Profile' %}
-          $('.click4').css('background-color', 'rgb(221, 221, 221)').css('color', 'rgb(80, 80, 80)').css('border-bottom', '4px solid #607080');
-          $('.click2, .click3, .click1, .click5, .click6, .click7').css('background-color', '#343a40');
-        {% elif title == 'Login' %}
-          $('.click6').css('background-color', 'rgb(221, 221, 221)').css('color', 'rgb(80, 80, 80)').css('border-bottom', '4px solid #607080');
-          $('.click2, .click3, .click4, .click5, .click1, .click7').css('background-color', '#343a40');
-        {% elif title == 'Signup' %}
-          $('.click7').css('background-color', 'rgb(221, 221, 221)').css('color', 'rgb(80, 80, 80)').css('border-bottom', '4px solid #607080');
-          $('.click2, .click3, .click4, .click5, .click6, .click1').css('background-color', '#343a40');
+        {% if title %}
+          $('.home').css('background-color', 'white').css('border', '1px solid rgb(189, 189, 189)').css('margin-bottom', '100px')
         {% endif %}
-           
       });
     </script>
   </body>

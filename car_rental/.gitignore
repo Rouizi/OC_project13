@@ -3,6 +3,12 @@ car_rental/__pycache__
 catalog/__pycache__
 catalog/migrations/__pycache__
 catalog/tests/__pycache__
+booking/__pycache__
+booking/migrations/__pycache__
+booking/tests/__pycache__
+users/__pycache__
+users/migrations/__pycache__
+users/tests/__pycache__
 ../.idea/
 .pytest_cache/
 .vscode/
