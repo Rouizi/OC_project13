@@ -56,7 +56,7 @@ def create_deal(request, deal=None):
         update = True
 
     else:
-        print('step2')
+        update = False
         form = CreateDealForm()
 
     return render(request, 'booking/create_deal.html', {'title': title, 'form': form, 'update': update})
@@ -82,7 +82,6 @@ def cars(request):
 def update_deal(request, id_deal):
     id_deal = int(id_deal)
     deal = CreateDeal.objects.filter(id=id_deal, user=request.user)
-    #print(deal[0].name)
     if not deal.exists():
         messages.add_message(request, messages.INFO,
                              'No deal found.')
@@ -111,14 +110,24 @@ def confirmation_delete(request, id_deal):
     deal = CreateDeal.objects.filter(id=id_deal, user=request.user)
     if not deal.exists():
         messages.add_message(request, messages.INFO,
-                                            'No deal found')
+                                            'Deal not found')
     else:
         deal.delete()
         messages.add_message(request, messages.INFO,
                                             'Your deal has been deleted.')
     return redirect('index')
 
+
 def detail_deal(request):
-    pass
+    title = 'Detail deal'
+
+    id_deal = request.GET['id_deal']
+    deal = CreateDeal.objects.filter(id=id_deal)
+    if not deal.exists():
+        messages.add_message(request, messages.INFO,
+                             'Deal not found, it has been deleted ou updated')
+        return redirect('index')
+    deal = deal[0]
+    return render(request, 'booking/detail_deal.html', locals())
 
 

@@ -5,34 +5,36 @@
 
 {% block content %}
   <hr>
-  <table>
-    <tr class="row" valign="top">
-      <td class="col-xs-3">
+    <div class="row">
+      <div class="col-sm-4 col-xs-8">
         {% if user_has_profile_image %}
           {% for p in profile %}
-            <img class="profile_image " src="{{ p.profile_image.url }}" alt="profile_image">
+            <img class="col-xs-12" src="{{ p.profile_image.url }}" alt="profile_image">
           {% endfor %}
         {% else %}
-          <img class="avatar" src="{{ avatar }}" alt="avatar">
+          <img class="col-xs-12" src="{{ avatar }}" alt="avatar">
         {% endif %}
-      </td>
-      <td class="col-xs-8">
+      </div>
+      <div class="col-sm-8 col-xs-12">
         <h1>User: {{ profile_user.username }}</h1>
-        <p>Last seen on: {{ profile_user.last_login }}</p>
-        <p>Email: {{ profile_user.email }}</p>
+        <p class="col-xs-12">Last seen on: {{ profile_user.last_login }}</p>
+        <p class="col-xs-12">Email: {{ profile_user.email }}</p>
         {% for p in profile %}
-          {% if p.phone_number != None and p.phone_number != '' %}<p>Phone number: {{ p.phone_number }}</p>{% endif %}
-          {% if p.location != None and p.location != '' %}<p>Location: {{ p.location }}</p>{% endif %}
+          {% if p.phone_number != None and p.phone_number != '' %}
+            <p class="col-xs-12">Phone number: {{ p.phone_number }}</p>
+          {% endif %}
+          {% if p.location != None and p.location != '' %}
+            <p class="col-xs-12">Location: {{ p.location }}</p>
+          {% endif %}
         {% endfor %}
         <!--We check If the user is consulting her profile or not-->
         {% if user == profile_user %}
-          <p><a href='{% url "users:edit_profile" %}' >Edit your profile</a></p>
+          <p class="col-xs-12"><a href='{% url "users:edit_profile" %}' >Edit your profile</a></p>
         {% else %}
-          <p><a href="#">Send private message</a></p>
+          <p class="col-xs-12"><a href="#">Send private message</a></p>
         {% endif %}
-      </td>
-    </tr>
-  </table>
+      </div>
+    </div>
   <hr>
   
 {% endblock %}
