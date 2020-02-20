@@ -9,7 +9,8 @@ booking/tests/__pycache__
 users/__pycache__
 users/migrations/__pycache__
 users/tests/__pycache__
-../.idea/
+__pycache__
+.idea/
 .pytest_cache/
 .vscode/
 ../.git/

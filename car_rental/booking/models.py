@@ -5,7 +5,7 @@ import datetime
 
 class CreateDeal(models.Model):
     name = models.CharField(max_length=100)
-    energie = models.CharField(max_length=15)
+    fuel = models.CharField(max_length=15)
     mileage = models.PositiveIntegerField()
     phone_number = models.CharField(max_length=17) 
     location = models.CharField(max_length=100)

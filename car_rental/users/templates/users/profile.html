@@ -6,17 +6,17 @@
 {% block content %}
   <hr>
   <table>
-    <tr valign="top">
-      <td >
+    <tr class="row" valign="top">
+      <td class="col-xs-3">
         {% if user_has_profile_image %}
           {% for p in profile %}
-            <img class="profile_image" src="{{ p.profile_image.url }}" alt="profile_image">
+            <img class="profile_image " src="{{ p.profile_image.url }}" alt="profile_image">
           {% endfor %}
         {% else %}
           <img class="avatar" src="{{ avatar }}" alt="avatar">
         {% endif %}
       </td>
-      <td>
+      <td class="col-xs-8">
         <h1>User: {{ profile_user.username }}</h1>
         <p>Last seen on: {{ profile_user.last_login }}</p>
         <p>Email: {{ profile_user.email }}</p>

@@ -2,7 +2,7 @@
 
 {% block head %}
   <div>
-    <h2>Create deal</h2>
+    <h2>Let your car work for you</h2>
     <hr>
   </div>
 {% endblock %}
@@ -20,6 +20,12 @@
       <br>
     </p>
     {% endfor %}
-    <button class="btn btn-primary submit" type="submit">Submit</button>
+    <button class="btn btn-primary submit" type="submit">
+        {% if update %}
+          Update
+        {% else %}
+          Submit
+        {% endif %}
+    </button>
   </form>
 {% endblock %}

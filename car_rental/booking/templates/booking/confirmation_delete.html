@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<div>
+    <h2>Are you sure you want to delete your deal ?</h2>
+    <hr>
+</div>
+{% endblock %}
+
+{% block content %}
+<p class="col-xs-12">
+    <a class="btn btn-danger btn-lg" href="{% url 'booking:confirmation_delete' id_deal %}">Delete</a>
+    <a class="btn btn-warning btn-lg" href="{% url 'booking:cars' %}">Cancel</a>
+</p>
+{% endblock %}

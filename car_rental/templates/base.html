@@ -61,10 +61,17 @@
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}
-              <li><a href="{% url 'booking:create_deal' %}">Create deal</a></li>
-              <li><a href="#">Reservations</a></li>
-              <li><a href="#">Requests</a></li>
-              <li><a href="{% url 'users:profile' user.username %}">Profile</a></li>
+              <li><a href="{% url 'booking:create_deal' %}">Hire out your car</a></li>
+              <li><a href="#">message</a></li>
+              <li class="dropdown">
+                <a data-toggle="dropdown" href="#">{{ user.username }}<b class="caret"></b></a>
+                <ul class="dropdown-menu dropdown-menu-left">
+                  <li><a href="{% url 'users:profile' user.username %}">Profile</a></li>
+                  <li><a href="#">Requests</a></li>
+                  <li><a href="{% url 'booking:cars' %}">Your cars</a></li>
+                  <li><a href="#">Your reservations</a></li>
+                </ul>
+              </li>
               <li><a href="{% url 'users:log_out' %}">Logout</a></li>
             {% else %}
               <li><a href="{% url 'users:log_in' %}">Login</a></li>
@@ -80,7 +87,13 @@
     {% if messages %}
       {% for message in messages %}
         <div class='row'>
-            <div {% if message.tags == 'error' %} class="alert alert-danger col-xs-9 message"{% else %}class="alert alert-success col-xs-9 message"{% endif %} role="alert">{{ message }}</div>
+          {% if message.tags == 'error' %}
+            <div class="alert alert-danger col-xs-9 message" role="alert">{{ message }}</div>
+          {% elif message.tags == 'info' %}
+          <div class="alert alert-info col-xs-9 message" role="alert">{{ message }}</div>
+          {% else %}
+            <div class="alert alert-success col-xs-9 message" role="alert">{{ message }}</div>
+          {% endif %}
         </div>
       {% endfor %}
     {% endif %}
@@ -89,29 +102,44 @@
     <!--SECTION-->
     <section class="container home">
       {% block head %}
-        <h1>berbererberb</h1>
+      <div class="row title">
+        <h1>BooshCar</h1>
+        <p>Rent a car easily online</p>
+      </div>  
         <hr>
       {% endblock %}
       {% block content %}
       <div class="row">
-        <div class="col-xs-3">
-          <h2 class="col-xs-12">Categories</h2>
+        <div class="col-md-3 col-sm-8 col-xs-10">
+          <h2 class="col-xs-12">Filters</h2>
           <ul class="list-group col-xs-12">
-            <li class="list-group-item"><a>Display all</a></li>
-            <li class="list-group-item"><a>Display by location</a></li>
-            <li class="list-group-item"><a>Increasing price</a></li>
-            <li class="list-group-item"><a>Increasing mileage</a></li>
+            <li class="list-group-item"><a href="{% url 'index' %}">Display all</a></li>
+            <li class="list-group-item"><a href="{% url 'index' %}?order_by=location">Display by location</a></li>
+            <li class="list-group-item"><a href="{% url 'index' %}?order_by=price">Increasing price</a></li>
+            <li class="list-group-item"><a href="{% url 'index' %}?order_by=mileage">Increasing mileage</a></li>
           </ul>
         </div>
 
-        <div class="col-xs-9">
+        <div class="col-md-9 col-sm-12 col-xs-12">
           <div class="row">
             <h2 class="col-xs-12">Deals</h2>
           </div>
           {% for deal in all_deals %}
-            <div class="row" style="border: 1px solid black; margin-bottom: 10px">
-              <img class="col-xs-4" style="margin-bottom: 10px; margin-top: 10px" src="{{ deal.car_picture.url }}" alt="deal.id" />
-              <div class="col-xs-8">hgn gh</div>
+            <div class="row deal">
+              <a class="col-sm-4 col-xs-8 link-deal" href="#">
+                <img class="col-xs-12 img-deal" src="{{ deal.car_picture.url }}" alt="deal.id" />
+              </a>
+              <div class="col-sm-8 col-xs-12">
+                <div class="row" style="margin-top: 10px; ">
+                  <p class="col-xs-12">
+                    <a href="{% url 'users:profile' deal.user.username %}">{{ deal.user.username }}</a>
+                    {{ deal.location }}
+                  </p>
+                  <p class="col-xs-12 hidden-xs">Created on : {{ deal.created_at }}</p>
+                  <p class="col-xs-12">Energie: {{ deal.fuel }}, Mileage: {{ deal.mileage }} km, Price {{ deal.price }} €</p>
+                  <p class="col-xs-12">{{ deal.description|truncatewords:10 }}</p>
+                </div>
+              </div>
             </div> 
           {% endfor %}
         </div>
@@ -141,7 +169,7 @@
     <script>
       $(function () {
         {% if title %}
-          $('.home').css('background-color', 'white').css('border', '1px solid rgb(189, 189, 189)').css('margin-bottom', '100px')
+          $('.home').css('background-color', 'white').css('border', '1px solid rgb(189, 189, 189)')
         {% endif %}
       });
     </script>
