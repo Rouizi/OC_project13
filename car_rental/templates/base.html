@@ -87,12 +87,12 @@
     {% if messages %}
       {% for message in messages %}
         <div class='row'>
-          {% if message.tags == 'error' %}
-            <div class="alert alert-danger col-xs-offset-1 col-xs-10" role="alert">{{ message }}</div>
+          {% if message.tags == 'warning' %}
+            <div class="alert alert-danger col-sm12 col-xs-10" role="alert">{{ message }}</div>
           {% elif message.tags == 'info' %}
-          <div class="alert alert-info col-xs-offset-1 col-xs-10" role="alert">{{ message }}</div>
+          <div class="alert alert-info col-sm-12 col-xs-10" role="alert">{{ message }}</div>
           {% else %}
-            <div class="alert alert-success col-xs-offset-1 col-xs-10" role="alert">{{ message }}</div>
+            <div class="alert alert-success col-sm-12 col-xs-10" role="alert">{{ message }}</div>
           {% endif %}
         </div>
       {% endfor %}
@@ -106,7 +106,7 @@
         <h1>BooshCar</h1>
         <p>Rent a car easily online</p>
       </div>
-        <hr>
+          <hr/>
       {% endblock %}
       {% block content %}
       <div class="row">
@@ -163,6 +163,7 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="https://getbootstrap.com/docs/3.3/assets/js/ie10-viewport-bug-workaround.js"></script>

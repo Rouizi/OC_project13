@@ -8,14 +8,14 @@
 {% endblock %}
 
 {% block content %}
-  <form class=" row" method="post" enctype="multipart/form-data">
+  <form class="row" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {% for field in form %}
     <p class="col-xs-12 ">
       {{ field.label_tag }}<br>
       {{ field }}
       {% for error in field.errors %}
-      <p class="col-xs-12 error">{{ error }}</p>
+        <p class="col-xs-12 error">{{ error }}</p>
       {% endfor %}
       <br>
     </p>

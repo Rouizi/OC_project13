@@ -9,7 +9,8 @@
           <a class="btn btn-primary btn-md" href="{% url 'booking:update_deal' deal.id %}">Update</a>
           <a class="btn btn-danger btn-md" href="{% url 'booking:delete_deal' deal.id %}">Delete</a>
         {% else %}
-          <a class="btn btn-primary btn-md" href="#">Reserve</a>
+            {{ deal.id }}
+          <a class="btn btn-primary btn-md" href="{% url 'booking:reservations' deal.id %}">Reserve</a>
         {% endif %}
       {% endif %}
     </h2>
@@ -35,5 +36,5 @@
         <p class="col-xs-12">{{ deal.description }}</p>
       </div>
     </div>
-      </div>
+  </div>
 {% endblock %}

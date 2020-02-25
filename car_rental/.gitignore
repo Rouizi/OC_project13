@@ -11,6 +11,7 @@ users/migrations/__pycache__
 users/tests/__pycache__
 __pycache__
 .idea/
+../.idea
 .pytest_cache/
 .vscode/
 ../.git/

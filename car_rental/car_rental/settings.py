@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'booking',
     'users',
+    'bootstrap_datepicker_plus',
+    'bootstrap3',
 ]
 
 MIDDLEWARE = [
@@ -123,6 +125,21 @@ USE_L10N = True
 
 USE_TZ = True
 
+
+# CELERY STUFF
+BROKER_URL = 'redis://@localhost:6379'
+# List of modules to import when the Celery worker starts.
+#imports = ('booking.tasks',)
+CELERY_RESULT_BACKEND = 'redis://@localhost:6379'
+
+from celery.schedules import crontab
+CELERY_BEAT_SCHEDULE = {
+    # Executes every Friday at 4pm
+    'send-notification-on-friday-afternoon': {
+         'task': 'booking.tasks.reservation_date',
+         'schedule': 10.0,
+        },
+}
 
 
 # Static files (CSS, JavaScript, Images)

@@ -1,6 +1,44 @@
 from django import forms
-#from booking.models import CreateDeal
 from django.core.validators import RegexValidator
+from bootstrap_datepicker_plus import DatePickerInput
+from booking.models import ReservationDeal
+import datetime
+
+
+class ReservationDealForm(forms.ModelForm):
+
+    class Meta:
+        model = ReservationDeal
+        fields = ['check_in', 'check_out']
+        widgets = {
+            'check_in': DatePickerInput(
+                options={
+                    "format": "MM/DD/YYYY",
+                    "minDate": (datetime.datetime.today()+ datetime.timedelta(days=0)).strftime('%Y-%m-%d'),
+                    "maxDate": (datetime.datetime.today() + datetime.timedelta(days=30)).strftime('%Y-%m-%d'),
+                }
+            ),
+            'check_out': DatePickerInput(
+                options={
+                    "format": "MM/DD/YYYY",
+                    "minDate": (datetime.datetime.today()+ datetime.timedelta(days=1)).strftime('%Y-%m-%d'),
+                    "maxDate": (datetime.datetime.today()+ datetime.timedelta(days=30)).strftime('%Y-%m-%d'),
+                }
+            ),
+        }
+
+    def min_date(self):
+        a = 0
+        return
+
+    def clean(self):
+        cleaned_data = super(ReservationDealForm, self).clean()
+        check_in = cleaned_data.get('check_in')
+        check_out = cleaned_data.get('check_out')
+        if check_in and check_out:
+            if check_in > check_out:
+                self.add_error("check_in", "Check_in must be before Check_out")
+        return cleaned_data
 
 
 
