@@ -29,7 +29,8 @@ def signup(request):
             return redirect('index')
     else:
         form = SignUpForm()
-    return render(request, 'users/signup.html', {'form': form ,'title': title})
+    return render(request, 'users/signup.html', {'form': form, 'title': title})
+
 
 def log_in(request):
     title = 'Login'
@@ -51,7 +52,7 @@ def log_in(request):
             elif user and next is not None:
                 login(request, user)
                 return redirect(next)
-            else: # otherwise an error will be displayed
+            else:  # otherwise an error will be displayed
                 error = True
     else:
         form = ConnexionForm()
@@ -75,15 +76,18 @@ def profile(request, username):
         if profile[0].profile_image:
             user_has_profile_image = True
         else:
-            user_has_profile_image = False 
-    else: 
-         user_has_profile_image = False
+            user_has_profile_image = False
+    else:
+        user_has_profile_image = False
     p = Profile()
     p.user = profile_user
     avatar = p.avatar(128)
 
-    return render(request, 'users/profile.html', {'title': title, 'profile': profile, 
-                        'avatar': avatar, 'profile_user': profile_user, 'user_has_profile_image': user_has_profile_image})
+    return render(request, 'users/profile.html', {
+        'title': title, 'profile': profile,
+        'avatar': avatar, 'profile_user': profile_user,
+        'user_has_profile_image': user_has_profile_image
+    })
 
 
 @login_required
@@ -117,7 +121,7 @@ def edit_profile(request):
                     edit.phone_number = phone_number
                     edit.location = location
                     edit.profile_image = profile_image
-                    username = username
+                    user.username = username
                     edit.save()
                     user.save()
                 messages.add_message(request, messages.SUCCESS,
@@ -126,14 +130,18 @@ def edit_profile(request):
     else:
         edit = Profile.objects.filter(user=request.user)
         if edit.exists():
-            form = EditProfileForm(request.user.username, {'username': request.user.username,
-                                            'phone_number': edit[0].phone_number, 'location': edit[0].location}, request.FILES)
+            form = EditProfileForm(request.user.username, {
+                'username': request.user.username,
+                'phone_number': edit[0].phone_number,
+                'location': edit[0].location
+            },
+                request.FILES
+            )
         else:
-            form = EditProfileForm(request.user.username, {'username': request.user.username}, request.FILES)
+            form = EditProfileForm(request.user.username, {
+                'username': request.user.username
+            },
+                request.FILES
+            )
 
     return render(request, 'users/edit_profile.html', {'title': title, 'form': form})
-
-
-
-
-

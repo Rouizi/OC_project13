@@ -9,7 +9,7 @@
 
 {% block content %}
 <p class="col-xs-12">
-    <a class="btn btn-danger btn-lg" href="{% url 'booking:confirmation_delete' id_deal %}">Delete</a>
-    <a class="btn btn-warning btn-lg" href="{% url 'booking:cars' %}">Cancel</a>
+    <a class="btn btn-danger btn-lg" href="{% url 'booking:confirmation_delete' id_deal %}?delete=True">Delete</a>
+    <a class="btn btn-warning btn-lg" href="{% url 'booking:user_cars' %}">Cancel</a>
 </p>
 {% endblock %}

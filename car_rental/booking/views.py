@@ -6,7 +6,6 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 
 
-
 def index(request):
     """
     The home page of the website which displays all available deals
@@ -16,14 +15,26 @@ def index(request):
     if 'order_by' in request.GET:
         order_by = request.GET['order_by']
         all_deals = CreateDeal.objects.filter(available=True).order_by(order_by)
+
     return render(request, 'base.html', {'all_deals': all_deals, 'description': description})
 
 
 @login_required
-def create_deal(request, deal=None):
+def create_deal(request, id=None):
     """this view function allow users to create a deal"""
 
     title = 'Create Deal'
+
+    if id is None or int(id) == 0:
+        deal = None
+    else:
+        id = int(id)
+        try:
+            deal = CreateDeal.objects.filter(id=id, user=request.user)[0]
+        except IndexError:
+            messages.add_message(request, messages.WARNING, 'Deal not found.')
+            deal = None
+            return redirect('index')
 
     if request.method == 'POST':
         if deal is not None:
@@ -31,9 +42,15 @@ def create_deal(request, deal=None):
         else:
             update = False
         form = CreateDealForm(request.POST, request.FILES)
+
         if form.is_valid():
-            if deal is None: # If there is no update
+            if deal is None:  # If there is no update
                 deal = CreateDeal()
+                messages.add_message(request, messages.SUCCESS,
+                                     'Your deal has been created.')
+            else:
+                messages.add_message(request, messages.SUCCESS,
+                                     'Your deal has been updated.')
             deal.name = form.cleaned_data['Name']
             deal.fuel = form.cleaned_data['Fuel']
             deal.mileage = form.cleaned_data['mileage']
@@ -45,20 +62,12 @@ def create_deal(request, deal=None):
             deal.user = request.user
             deal.save()
 
-            if deal is None:
-                messages.add_message(request, messages.SUCCESS,
-                                     'Your deal has been created.')
-                
-            else:
-                messages.add_message(request, messages.SUCCESS,
-                                     'Your deal has been updated.')
             return redirect('index')
 
     elif deal is not None:
-        form = CreateDealForm(initial=
-            {'Name': deal.name, 'Fuel': deal.fuel, 'mileage': deal.mileage,
-             'phone_number': deal.phone_number, 'Location': deal.location,
-             'price': deal.price, 'car_picture': deal.car_picture, 'Description': deal.description})
+        form = CreateDealForm(initial={'Name': deal.name, 'Fuel': deal.fuel, 'mileage': deal.mileage,
+                                       'phone_number': deal.phone_number, 'Location': deal.location,
+                                       'price': deal.price, 'car_picture': deal.car_picture, 'Description': deal.description})
         update = True
 
     else:
@@ -68,9 +77,11 @@ def create_deal(request, deal=None):
     return render(request, 'booking/create_deal.html',
                   {'title': title, 'form': form, 'update': update})
 
+
 @login_required
 def requests(request):
     pass
+
 
 @login_required
 def reservations(request, id_deal):
@@ -100,8 +111,8 @@ def reservations(request, id_deal):
             print((reservation.check_out - date.today()) == timedelta(days=1))"""
             deal.update(available=False)  # We make the deal not available
             messages.add_message(request, messages.INFO,
-                                'We have send a request to the deal owner, '
-                                'if he does not respond within 3 days the reservation will be canceled.')
+                                 'We have send a request to the deal owner, '
+                                 'if he does not respond within 3 days the reservation will be canceled.')
             return redirect('index')
     else:
         form = ReservationDealForm()
@@ -109,8 +120,9 @@ def reservations(request, id_deal):
     return render(request, 'booking/reservations.html',
                   {'title': title, 'form': form, 'deal': deal[0]})
 
+
 @login_required
-def cars(request):
+def user_cars(request):
     """Display all deals of a user"""
 
     title = 'My cars'
@@ -119,6 +131,7 @@ def cars(request):
     user_cars = CreateDeal.objects.filter(user=user)
 
     return render(request, 'booking/user_cars.html', locals())
+
 
 @login_required
 def update_deal(request, id_deal):
@@ -131,39 +144,49 @@ def update_deal(request, id_deal):
                              'No deal found.')
         return redirect('index')
 
-    return create_deal(request, deal[0])
+    return redirect('booking:create_deal', id=deal[0].id)
+
 
 @login_required
 def delete_deal(request, id_deal):
     """Allow users to delete her deals, return to a confirmation page"""
-
-    title = "Delete deal"
-
+    
     id_deal = int(id_deal)
     user = get_object_or_404(User, id=request.user.id)
-    user_deals = CreateDeal.objects.filter(id=id_deal, user=user)
-    if not user_deals.exists():
-        messages.add_message(request, messages.INFO,
-                                        'Deal not found.')
+    user_deal = CreateDeal.objects.filter(id=id_deal, user=user)
+    if not user_deal.exists():
+        messages.add_message(request, messages.WARNING,
+                             'Deal not found.')
 
         return redirect('index')
 
-    return render(request, 'booking/confirmation_delete.html',
-                  {'title': title, 'id_deal': id_deal})
+    return redirect('booking:confirmation_delete', id_deal=id_deal)
+    
+
 
 @login_required
 def confirmation_delete(request, id_deal):
     """this view function is called before deleting a deal to confirm the deletion"""
 
+    title = "Confirmation delete deal"
+
+    id_deal = int(id_deal)
     deal = CreateDeal.objects.filter(id=id_deal, user=request.user)
     if not deal.exists():
-        messages.add_message(request, messages.INFO,
-                                            'Deal not found')
+        messages.add_message(request, messages.WARNING,
+                             'Deal not found.')
+        return redirect('index')
     else:
-        deal.delete()
-        messages.add_message(request, messages.INFO,
-                                            'Your deal has been deleted.')
-    return redirect('index')
+        if 'delete' in request.GET:
+            delete = request.GET['delete']
+            if delete == 'True':
+                deal.delete()
+                messages.add_message(request, messages.SUCCESS, 'Your deal has been deleted.')
+                return redirect('index')
+
+        return render(request, 'booking/confirmation_delete.html', 
+            {'title': title, 'id_deal': id_deal}
+        )
 
 
 def detail_deal(request):
@@ -174,10 +197,8 @@ def detail_deal(request):
     id_deal = request.GET['id_deal']
     deal = CreateDeal.objects.filter(id=id_deal, available=True)
     if not deal.exists():
-        messages.add_message(request, messages.INFO,
-                             'Deal not found, it has been deleted ou updated')
+        messages.add_message(request, messages.WARNING,
+                             'Deal not found, it has been deleted.')
         return redirect('index')
     deal = deal[0]
     return render(request, 'booking/detail_deal.html', locals())
-
-

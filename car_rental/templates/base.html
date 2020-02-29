@@ -61,14 +61,14 @@
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}
-              <li><a href="{% url 'booking:create_deal' %}">Hire out your car</a></li>
+              <li><a href="{% url 'booking:create_deal' 0 %}">Hire out your car</a></li>
               <li><a href="#">message</a></li>
               <li class="dropdown">
                 <a data-toggle="dropdown" href="#">{{ user.username }}<b class="caret"></b></a>
                 <ul class="dropdown-menu dropdown-menu-left">
                   <li><a href="{% url 'users:profile' user.username %}">Profile</a></li>
                   <li><a href="#">Requests</a></li>
-                  <li><a href="{% url 'booking:cars' %}">Your cars</a></li>
+                  <li><a href="{% url 'booking:user_cars' %}">Your cars</a></li>
                   <li><a href="#">Your reservations</a></li>
                 </ul>
               </li>
@@ -88,7 +88,7 @@
       {% for message in messages %}
         <div class='row'>
           {% if message.tags == 'warning' %}
-            <div class="alert alert-danger col-sm12 col-xs-10" role="alert">{{ message }}</div>
+            <div class="alert alert-danger col-sm-12 col-xs-10" role="alert">{{ message }}</div>
           {% elif message.tags == 'info' %}
           <div class="alert alert-info col-sm-12 col-xs-10" role="alert">{{ message }}</div>
           {% else %}
@@ -135,7 +135,7 @@
                     <a href="{% url 'users:profile' deal.user.username %}">{{ deal.user.username }}</a>
                     {{ deal.location }}
                   </p>
-                  <p class="col-xs-12 hidden-xs">Created on : {{ deal.created_at }}</p>
+                  <p class="col-xs-12 hidden-xs">Created on : {{ deal.created_on }}</p>
                   <p class="col-xs-12">Energie: {{ deal.fuel }}, Mileage: {{ deal.mileage }} km, Price {{ deal.price }} €</p>
                   <p class="col-xs-12">{{ deal.description|truncatewords:10 }}</p>
                 </div>
