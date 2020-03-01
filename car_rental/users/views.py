@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from users.forms import SignUpForm, ConnexionForm, EditProfileForm
 from django.contrib.auth.decorators import login_required
 from users.models import Profile
-from django.db import transaction
+from django.db import transaction, IntegrityError
 
 
 def signup(request):
@@ -105,28 +105,31 @@ def edit_profile(request):
             user = get_object_or_404(User, id=request.user.id)
 
             # We use a transaction so that if one of the requests below fails all previous ones are canceled
-            with transaction.atomic():
-                edit = Profile.objects.filter(user=user)
-                if edit.exists():
-                    edit = Profile.objects.get(user=user)
-                    edit.phone_number = phone_number
-                    edit.location = location
-                    if profile_image:
-                        edit.profile_image = request.FILES['profile_image']
-                    edit.save()
-                    user.username = username
-                    user.save()
-                else:
-                    edit = Profile(user=user)
-                    edit.phone_number = phone_number
-                    edit.location = location
-                    edit.profile_image = profile_image
-                    user.username = username
-                    edit.save()
-                    user.save()
-                messages.add_message(request, messages.SUCCESS,
-                                        'Your changes have been saved.')
-                return redirect('users:profile', username=user.username)
+            try:
+                with transaction.atomic():
+                    edit = Profile.objects.filter(user=user)
+                    if edit.exists():
+                        edit = Profile.objects.get(user=user)
+                        edit.phone_number = phone_number
+                        edit.location = location
+                        if profile_image:
+                            edit.profile_image = request.FILES['profile_image']
+                        edit.save()
+                        user.username = username
+                        user.save()
+                    else:
+                        edit = Profile(user=user)
+                        edit.phone_number = phone_number
+                        edit.location = location
+                        edit.profile_image = profile_image
+                        user.username = username
+                        edit.save()
+                        user.save()
+                    messages.add_message(request, messages.SUCCESS,
+                                            'Your changes have been saved.')
+                    return redirect('users:profile', username=user.username)
+            except IntegrityError:
+                form.errors['internal'] = "An internal error has occurred. Please try your request again."
     else:
         edit = Profile.objects.filter(user=request.user)
         if edit.exists():

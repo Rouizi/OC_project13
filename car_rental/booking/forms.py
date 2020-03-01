@@ -49,16 +49,16 @@ class ReservationDealForm(forms.ModelForm):
             'check_in': DatePickerInput(
                 options={
                     "format": "MM/DD/YYYY",
-                    "defaultDate": datetime.datetime.today().strftime('%Y-%m-%d'),
-                    "minDate": (datetime.datetime.today() + datetime.timedelta(days=0)).strftime('%Y-%m-%d'),
+                    "defaultDate": (datetime.datetime.today() + datetime.timedelta(days=1)).strftime('%Y-%m-%d'),
+                    "minDate": (datetime.datetime.today() + datetime.timedelta(days=1)).strftime('%Y-%m-%d'),
                     "maxDate": (datetime.datetime.today() + datetime.timedelta(days=30)).strftime('%Y-%m-%d'),
                 }
             ),
             'check_out': DatePickerInput(
                 options={
                     "format": "MM/DD/YYYY",
-                    "defaultDate": (datetime.datetime.today() + datetime.timedelta(days=1)).strftime('%Y-%m-%d'),
-                    "minDate": (datetime.datetime.today() + datetime.timedelta(days=1)).strftime('%Y-%m-%d'),
+                    "defaultDate": (datetime.datetime.today() + datetime.timedelta(days=2)).strftime('%Y-%m-%d'),
+                    "minDate": (datetime.datetime.today() + datetime.timedelta(days=2)).strftime('%Y-%m-%d'),
                     "maxDate": (datetime.datetime.today() + datetime.timedelta(days=30)).strftime('%Y-%m-%d'),
                 }
             ),
@@ -71,5 +71,5 @@ class ReservationDealForm(forms.ModelForm):
         check_out = cleaned_data.get('check_out')
         if check_in and check_out:
             if check_in > check_out:
-                self.add_error("check_in", "Check_in must be before Check_out")
+                self.add_error("check_in", "Check in must be before Check out")
         return cleaned_data

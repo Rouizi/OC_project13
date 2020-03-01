@@ -1,15 +1,21 @@
 from celery import shared_task
-from .models import ReservationDeal
+from .models import ReservationDeal, CreateDeal
+from django.db import transaction
 
 
 @shared_task()
 def reservation_date():
-     print('ETAPE 1111111')
-     reservations = ReservationDeal.objects.all()
-     print('ETAPE 2222222222')
-     for reservation in reservations:
-          print('ETAPE 3333333')
-          if reservation.is_expired():
-               print('JE VAIS SUPPRIMER LA RESERVATION .....')
-               reservation.delete()
-               print('RESERVATION SUPPRIMER    !!!!!')
+    reservations = ReservationDeal.objects.all()
+    for reservation in reservations:
+        if reservation.cancel():
+            with transaction.atomic():
+                reservation.canceled = True
+                reservation.accepted = False
+                reservation.requested = False
+                reservation.save()
+                id_deal = reservation.deal.id
+                deal = CreateDeal.objects.filter(id=id_deal).update(available=True)
+            
+        if reservation.is_expired():
+            id_deal = reservation.deal.id
+            CreateDeal.objects.filter(id=id_deal).update(available=True)

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  <div>
+    <h2>List of all your reservations</h2>
+    <hr>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <section class="table-responsive">
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>Deal owner</th>
+          <th>car</th>
+          <th>Reserved on</th>
+          <th>Check in</th>
+          <th>Check out</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for res in user_reservations %}
+          <tr>
+            <td><a href="{% url 'users:profile' res.user_owner.username %}">{{ res.user_owner.username }}</a></td>
+            <td>{{ res.deal.name }}</td>
+            <td>{{ res.reserved_on }}</td>
+            <td>{{ res.check_in }}</td>
+            <td>{{ res.check_out }}</td>
+            <td>
+              {% if res.canceled == False and res.accepted == False and res.requested == True %}
+                Requested
+                <a class="btn btn-danger btn-sm" href="{% url 'booking:user_reservations' %}?cancel=True&id_deal={{ res.deal.id }}">Cancel</a>
+              {% elif res.canceled == False and res.accepted == True and res.requested == False %}
+                Accepted
+              {% elif res.canceled == False and res.accepted == False and res.requested == False %}
+                Refused
+              {% elif res.canceled == True and res.accepted == False and res.requested == False %}
+                Canceled
+              {% endif %} 
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+{% endblock %}

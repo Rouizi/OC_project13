@@ -67,9 +67,9 @@
                 <a data-toggle="dropdown" href="#">{{ user.username }}<b class="caret"></b></a>
                 <ul class="dropdown-menu dropdown-menu-left">
                   <li><a href="{% url 'users:profile' user.username %}">Profile</a></li>
-                  <li><a href="#">Requests</a></li>
+                  <li><a href="{% url 'booking:user_requests' %}">Requests</a></li>
                   <li><a href="{% url 'booking:user_cars' %}">Your cars</a></li>
-                  <li><a href="#">Your reservations</a></li>
+                  <li><a href="{% url 'booking:user_reservations' %}">Your reservations</a></li>
                 </ul>
               </li>
               <li><a href="{% url 'users:log_out' %}">Logout</a></li>
@@ -87,8 +87,10 @@
     {% if messages %}
       {% for message in messages %}
         <div class='row'>
-          {% if message.tags == 'warning' %}
+          {% if message.tags == 'error' %}
             <div class="alert alert-danger col-sm-12 col-xs-10" role="alert">{{ message }}</div>
+            {% elif message.tags == 'warning' %}
+          <div class="alert alert-warning col-sm-12 col-xs-10" role="alert">{{ message }}</div>
           {% elif message.tags == 'info' %}
           <div class="alert alert-info col-sm-12 col-xs-10" role="alert">{{ message }}</div>
           {% else %}

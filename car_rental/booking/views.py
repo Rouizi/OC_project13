@@ -4,6 +4,7 @@ from booking.models import CreateDeal, ReservationDeal
 from booking.forms import CreateDealForm, ReservationDealForm
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.db import transaction, IntegrityError
 
 
 def index(request):
@@ -32,7 +33,7 @@ def create_deal(request, id=None):
         try:
             deal = CreateDeal.objects.filter(id=id, user=request.user)[0]
         except IndexError:
-            messages.add_message(request, messages.WARNING, 'Deal not found.')
+            messages.add_message(request, messages.ERROR, 'Deal not found.')
             deal = None
             return redirect('index')
 
@@ -46,30 +47,42 @@ def create_deal(request, id=None):
         if form.is_valid():
             if deal is None:  # If there is no update
                 deal = CreateDeal()
+                deal.name = form.cleaned_data['Name']
+                deal.fuel = form.cleaned_data['Fuel']
+                deal.mileage = form.cleaned_data['mileage']
+                deal.phone_number = form.cleaned_data['phone_number']
+                deal.location = form.cleaned_data['Location']
+                deal.car_picture = form.cleaned_data['car_picture']
+                deal.description = form.cleaned_data['Description']
+                deal.price = form.cleaned_data['price']
+                deal.user = request.user
+                deal.save()
                 messages.add_message(request, messages.SUCCESS,
                                      'Your deal has been created.')
             else:
+                deal.name = form.cleaned_data['Name']
+                deal.fuel = form.cleaned_data['Fuel']
+                deal.mileage = form.cleaned_data['mileage']
+                deal.phone_number = form.cleaned_data['phone_number']
+                deal.location = form.cleaned_data['Location']
+                deal.car_picture = form.cleaned_data['car_picture']
+                deal.description = form.cleaned_data['Description']
+                deal.price = form.cleaned_data['price']
+                deal.user = request.user
+                deal.save()
                 messages.add_message(request, messages.SUCCESS,
                                      'Your deal has been updated.')
-            deal.name = form.cleaned_data['Name']
-            deal.fuel = form.cleaned_data['Fuel']
-            deal.mileage = form.cleaned_data['mileage']
-            deal.phone_number = form.cleaned_data['phone_number']
-            deal.location = form.cleaned_data['Location']
-            deal.car_picture = form.cleaned_data['car_picture']
-            deal.description = form.cleaned_data['Description']
-            deal.price = form.cleaned_data['price']
-            deal.user = request.user
-            deal.save()
 
             return redirect('index')
 
     elif deal is not None:
-        form = CreateDealForm(initial={'Name': deal.name, 'Fuel': deal.fuel, 'mileage': deal.mileage,
-                                       'phone_number': deal.phone_number, 'Location': deal.location,
-                                       'price': deal.price, 'car_picture': deal.car_picture, 'Description': deal.description})
+        form = CreateDealForm(initial={
+            'Name': deal.name, 'Fuel': deal.fuel, 'mileage': deal.mileage,
+            'phone_number': deal.phone_number, 'Location': deal.location,
+            'price': deal.price, 'car_picture': deal.car_picture, 'Description': deal.description
+        })
         update = True
-
+        
     else:
         update = False
         form = CreateDealForm()
@@ -79,8 +92,83 @@ def create_deal(request, id=None):
 
 
 @login_required
-def requests(request):
-    pass
+def user_requests(request):
+    """List all requests of a user"""
+    
+    title = "My requests"
+
+    if 'accept' in request.GET and 'id_deal' in request.GET:
+        accept = request.GET['accept']
+        id_deal = request.GET['id_deal']
+        if accept == 'True':
+            deal = get_object_or_404(CreateDeal, id=int(id_deal))
+            user_request = get_object_or_404(ReservationDeal, user_owner=request.user, deal=deal, requested=True)
+            # We use a transaction so that if one of the requests below fails all previous ones are canceled
+            try:
+                with transaction.atomic():
+                    user_request.canceled = False
+                    user_request.accepted = True
+                    user_request.requested = False
+                    user_request.save()
+                    deal.available = False
+                    deal.save()
+            except IntegrityError:
+                messages.add_message(
+                    request, messages.ERROR,
+                    'An internal error has occurred. Please try your request again.')
+                return redirect('index')
+        elif accept == 'False':
+            deal = get_object_or_404(CreateDeal, id=int(id_deal))
+            user_request = get_object_or_404(ReservationDeal, user_owner=request.user, deal=deal, requested=True)
+            try:
+                with transaction.atomic():
+                    user_request.canceled = False
+                    user_request.accepted = False
+                    user_request.requested = False
+                    user_request.save()
+                    deal.available = True
+                    deal.save()
+            except IntegrityError:
+                messages.add_message(
+                    request, messages.ERROR,
+                    'An internal error has occurred. Please try your request again.')
+                return redirect('index')
+
+    user_requests = ReservationDeal.objects.filter(user_owner=request.user)
+
+    return render(request, 'booking/user_requests.html', {'title': title, 'user_requests': user_requests})
+
+
+@login_required
+def user_reservations(request):
+    """List all reservations of a user"""
+
+    title = 'My reservations'
+
+    if 'cancel' in request.GET and 'id_deal' in request.GET:
+        cancel = request.GET['cancel']
+        id_deal = request.GET['id_deal']
+        if cancel == 'True':
+            deal = get_object_or_404(CreateDeal, id=int(id_deal))
+            user_reservation = get_object_or_404(ReservationDeal, user_reserve=request.user, deal=deal, requested=True)
+            # We use a transaction so that if one of the requests below fails all previous ones are canceled
+            try:
+                with transaction.atomic():
+                    user_reservation.canceled = True
+                    user_reservation.accepted = False
+                    user_reservation.requested = False
+                    user_reservation.save()
+                    deal.available = True
+                    deal.save()
+            except IntegrityError:
+                messages.add_message(
+                    request, messages.ERROR,
+                    'An internal error has occurred. Please try your request again.')
+                return redirect('index')
+      
+    user_reservations = ReservationDeal.objects.filter(user_reserve=request.user)  
+
+    return render(request, 'booking/user_reservations.html', {'title': title, 'user_reservations': user_reservations})
 
 
 @login_required
@@ -92,28 +180,43 @@ def reservations(request, id_deal):
     id_deal = int(id_deal)
     deal = CreateDeal.objects.filter(id=id_deal, available=True)
     if not deal.exists():
-        messages.add_message(request, messages.INFO,
+        messages.add_message(request, messages.ERROR,
                              'No deal found.')
+        return redirect('index')
+
+    if deal[0].user == request.user:
+        messages.add_message(request, messages.ERROR,
+                             'You cannot book your own deal.')
         return redirect('index')
 
     if request.method == 'POST':
         form = ReservationDealForm(request.POST)
         if form.is_valid():
             reservation = ReservationDeal()
-            reservation.check_in = form.cleaned_data['check_in']
-            reservation.check_out = form.cleaned_data['check_out']
-            reservation.user = request.user
-            reservation.deal = deal[0]
-            reservation.save()
-            """
-            RENDRE UN DEAL AVAILABLE SI DIFF == 0
-            from datetime import date, timedelta
-            print((reservation.check_out - date.today()) == timedelta(days=1))"""
-            deal.update(available=False)  # We make the deal not available
-            messages.add_message(request, messages.INFO,
-                                 'We have send a request to the deal owner, '
-                                 'if he does not respond within 3 days the reservation will be canceled.')
-            return redirect('index')
+            try:
+                with transaction.atomic():
+                    reservation.check_in = form.cleaned_data['check_in']
+                    reservation.check_out = form.cleaned_data['check_out']
+                    reservation.requested = True
+                    reservation.canceled = False
+                    reservation.accepted = False
+                    reservation.user_owner = deal[0].user
+                    reservation.user_reserve = request.user
+                    reservation.deal = deal[0]
+                    reservation.save()
+                    """
+                    RENDRE UN DEAL AVAILABLE SI DIFF == 0
+                    from datetime import date, timedelta
+                    print((reservation.check_out - date.today()) == timedelta(days=1))"""
+                    deal.update(available=False)  # We make the deal not available
+                    messages.add_message(
+                        request, messages.WARNING,
+                        'We have send a request to the deal owner, '
+                        'if he does not respond tomorrow the reservation will be canceled.')
+                    return redirect('index')
+            except IntegrityError:
+                form.errors['internal'] = "An internal error has occurred. Please try your request again."
+                
     else:
         form = ReservationDealForm()
 
@@ -140,7 +243,7 @@ def update_deal(request, id_deal):
     id_deal = int(id_deal)
     deal = CreateDeal.objects.filter(id=id_deal, user=request.user)
     if not deal.exists():
-        messages.add_message(request, messages.INFO,
+        messages.add_message(request, messages.ERROR,
                              'No deal found.')
         return redirect('index')
 
@@ -155,7 +258,7 @@ def delete_deal(request, id_deal):
     user = get_object_or_404(User, id=request.user.id)
     user_deal = CreateDeal.objects.filter(id=id_deal, user=user)
     if not user_deal.exists():
-        messages.add_message(request, messages.WARNING,
+        messages.add_message(request, messages.ERROR,
                              'Deal not found.')
 
         return redirect('index')
@@ -173,7 +276,7 @@ def confirmation_delete(request, id_deal):
     id_deal = int(id_deal)
     deal = CreateDeal.objects.filter(id=id_deal, user=request.user)
     if not deal.exists():
-        messages.add_message(request, messages.WARNING,
+        messages.add_message(request, messages.ERROR,
                              'Deal not found.')
         return redirect('index')
     else:
@@ -195,9 +298,14 @@ def detail_deal(request):
     title = 'Detail deal'
 
     id_deal = request.GET['id_deal']
-    deal = CreateDeal.objects.filter(id=id_deal, available=True)
+    deal = CreateDeal.objects.filter(id=id_deal)
+    # If user want to see her deal we display it to him
+    if deal[0].user == request.user:
+        deal = CreateDeal.objects.filter(id=id_deal, user=request.user)
+    else:
+        deal = CreateDeal.objects.filter(id=id_deal, available=True)
     if not deal.exists():
-        messages.add_message(request, messages.WARNING,
+        messages.add_message(request, messages.ERROR,
                              'Deal not found, it has been deleted.')
         return redirect('index')
     deal = deal[0]

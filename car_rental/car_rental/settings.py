@@ -129,16 +129,13 @@ USE_TZ = True
 # CELERY STUFF
 BROKER_URL = 'redis://@localhost:6379'
 # List of modules to import when the Celery worker starts.
-#imports = ('booking.tasks',)
 CELERY_RESULT_BACKEND = 'redis://@localhost:6379'
 
-from celery.schedules import crontab
 CELERY_BEAT_SCHEDULE = {
-    # Executes every Friday at 4pm
     'send-notification-on-friday-afternoon': {
-         'task': 'booking.tasks.reservation_date',
-         'schedule': 10.0,
-        },
+        'task': 'booking.tasks.reservation_date',
+        'schedule': 10.0,
+    },
 }
 
 
@@ -148,8 +145,8 @@ CELERY_BEAT_SCHEDULE = {
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-        os.path.join(BASE_DIR, 'static'),
-    )
+    os.path.join(BASE_DIR, 'static'),
+)
 
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
@@ -161,7 +158,7 @@ INTERNAL_IPS = ['127.0.0.1']
 
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR,'media/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 
 LOGIN_URL = '/users/log_in/'
