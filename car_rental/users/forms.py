@@ -65,3 +65,12 @@ class EditProfileForm(forms.Form):
             if User.objects.filter(username=username).exists():
                 raise forms.ValidationError('This username is already taken.')
         return username
+
+
+class MessageForm(forms.Form):
+    message = forms.CharField(label='Message', max_length=140, widget=forms.Textarea(attrs={'rows': 5}))
+
+    def __init__(self, *args, **kwargs):
+        super(MessageForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'

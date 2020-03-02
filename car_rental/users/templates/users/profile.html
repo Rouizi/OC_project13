@@ -12,7 +12,7 @@
             <img class="col-xs-12" src="{{ p.profile_image.url }}" alt="profile_image">
           {% endfor %}
         {% else %}
-          <img class="col-xs-12" src="{{ avatar }}" alt="avatar">
+          <img class="col-xs-9" src="{{ avatar }}" alt="avatar">
         {% endif %}
       </div>
       <div class="col-sm-8 col-xs-12">
@@ -31,7 +31,7 @@
         {% if user == profile_user %}
           <p class="col-xs-12"><a href='{% url "users:edit_profile" %}' >Edit your profile</a></p>
         {% else %}
-          <p class="col-xs-12"><a href="#">Send private message</a></p>
+          <p class="col-xs-12"><a href="{% url 'users:send_message' profile_user %}">Send private message</a></p>
         {% endif %}
       </div>
     </div>

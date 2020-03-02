@@ -5,6 +5,7 @@ from django.db import transaction
 
 @shared_task()
 def reservation_date():
+    print('TAAAAAAAAAAAAAAAAAAAASK IS RUNIIIIIIIIIIIIIIING')
     reservations = ReservationDeal.objects.all()
     for reservation in reservations:
         if reservation.cancel():

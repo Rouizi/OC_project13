@@ -27,9 +27,9 @@
       <div class="row" style="margin-top: 10px;">
         <p class="col-xs-12">
           Owner: <a href="{% url 'users:profile' deal.user.username %}">{{ deal.user.username }}</a>
-          {{ car.location }}
+            <strong>{{ deal.location }}</strong>
         </p>
-        <p class="col-xs-12 hidden-xs">Created on : {{ deal.created_at }}</p>
+        <p class="col-xs-12 hidden-xs">Created on : {{ deal.created_on }}</p>
         <p class="col-xs-12">Energie: {{ deal.fuel }}</p>
         <p class="col-xs-12">Mileage: {{ deal.mileage }} km</p>
         <p class="col-xs-12">Price {{ deal.price }} €</p>

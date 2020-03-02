@@ -9,4 +9,6 @@ urlpatterns = [
     url(r'^log_out/$', views.log_out, name="log_out"),
     url(r'^profile/(?P<username>.+)$', views.profile, name='profile'),
     url(r'^edit_profile/$', views.edit_profile, name='edit_profile'),
+    url(r'^send_message/(?P<recipient>.+)$', views.send_message, name='send_message'),
+    url(r'^user_messages/$', views.user_messages, name='user_messages'),
 ]

@@ -5,10 +5,13 @@ from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from users.forms import SignUpForm, ConnexionForm, EditProfileForm
+from users.forms import SignUpForm, ConnexionForm, EditProfileForm, MessageForm
 from django.contrib.auth.decorators import login_required
-from users.models import Profile
+from users.models import Profile, Message, LastMessageRead
 from django.db import transaction, IntegrityError
+from django.utils import timezone
+from django.db import transaction
+from django.contrib.auth.models import Permission
 
 
 def signup(request):
@@ -22,11 +25,13 @@ def signup(request):
             form.save()
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=password)
-            login(request, user)
-            messages.add_message(request, messages.SUCCESS,
-                                 'Congratulations, you are now a registered user!')
-            return redirect('index')
+            with transaction.atomic():
+                user = authenticate(username=username, password=password)
+                login(request, user)
+                last_msg_read = LastMessageRead.objects.create(user=request.user, last_message_read_time=timezone.now())
+                last_msg_read.save()
+                messages.add_message(request, messages.SUCCESS, 'Congratulations, you are now a registered user!')
+                return redirect('index')
     else:
         form = SignUpForm()
     return render(request, 'users/signup.html', {'form': form, 'title': title})
@@ -148,3 +153,41 @@ def edit_profile(request):
             )
 
     return render(request, 'users/edit_profile.html', {'title': title, 'form': form})
+
+
+
+@login_required
+def send_message(request, recipient):
+    title = 'Send message'
+
+    if timezone.now() >= request.user.date_joined + timezone.timedelta(minutes=10):
+        permission = Permission.objects.get(name="Send Private Message")
+        request.user.user_permissions.add(permission)
+    if not request.user.has_perm('users.send_private_message'):
+        wait_sec = (timezone.timedelta(minutes=10) - (timezone.now() - request.user.date_joined)).seconds
+        messages.add_message(request, messages.WARNING,
+                    'New users must wait 24 hours before they can send private messages.'
+                    '(So that you can test this feature you can send a private '
+                    f'message in {wait_sec//60:0>2} min and {wait_sec%60:0>2} sec)')
+        return redirect('index')
+    user = get_object_or_404(User, username=recipient)
+    if request.method == "POST":
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            msg = Message(sender=request.user, recipient=user,
+                        body=form.cleaned_data['message'])
+            msg.save()
+            messages.add_message(request, messages.SUCCESS, 'Your message has been sent.')
+            return redirect('index')
+    else:
+        form = MessageForm()
+    return render(request, 'users/send_message.html', {'title': title, 'form': form, 'recipient': recipient})
+
+
+@login_required
+def user_messages(request):
+    title = 'Mailbox'
+
+    LastMessageRead.objects.filter(user=request.user).update(last_message_read_time=timezone.now()) 
+    msgs = Message.objects.filter(recipient=request.user).order_by('-timestamp')
+    return render(request, 'users/messages.html', {'title': title, 'msgs': msgs})

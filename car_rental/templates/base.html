@@ -62,7 +62,14 @@
           <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}
               <li><a href="{% url 'booking:create_deal' 0 %}">Hire out your car</a></li>
-              <li><a href="#">message</a></li>
+              <li>
+                <a href="{% url 'users:user_messages' %}">
+                  Messages
+                  {% if user.new_messages %}
+                    <span class="badge">{{ user.new_messages }}</span>
+                  {% endif %}
+                </a>  
+              </li>
               <li class="dropdown">
                 <a data-toggle="dropdown" href="#">{{ user.username }}<b class="caret"></b></a>
                 <ul class="dropdown-menu dropdown-menu-left">

@@ -5,6 +5,7 @@ from booking.forms import CreateDealForm, ReservationDealForm
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db import transaction, IntegrityError
+from users.models import LastMessageRead
 
 
 def index(request):
@@ -16,7 +17,7 @@ def index(request):
     if 'order_by' in request.GET:
         order_by = request.GET['order_by']
         all_deals = CreateDeal.objects.filter(available=True).order_by(order_by)
-
+    
     return render(request, 'base.html', {'all_deals': all_deals, 'description': description})
 
 
@@ -70,9 +71,7 @@ def create_deal(request, id=None):
                 deal.price = form.cleaned_data['price']
                 deal.user = request.user
                 deal.save()
-                messages.add_message(request, messages.SUCCESS,
-                                     'Your deal has been updated.')
-
+                messages.add_message(request, messages.SUCCESS, 'Your deal has been updated.')
             return redirect('index')
 
     elif deal is not None:
@@ -204,10 +203,6 @@ def reservations(request, id_deal):
                     reservation.user_reserve = request.user
                     reservation.deal = deal[0]
                     reservation.save()
-                    """
-                    RENDRE UN DEAL AVAILABLE SI DIFF == 0
-                    from datetime import date, timedelta
-                    print((reservation.check_out - date.today()) == timedelta(days=1))"""
                     deal.update(available=False)  # We make the deal not available
                     messages.add_message(
                         request, messages.WARNING,
