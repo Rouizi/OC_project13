@@ -9,10 +9,9 @@ from users.models import LastMessageRead
 
 
 def index(request):
-    """
-    The home page of the website which displays all available deals
-    """
+    """The home page of the website which displays all available deals"""
     description = ''
+    
     all_deals = CreateDeal.objects.filter(available=True)
     if 'order_by' in request.GET:
         order_by = request.GET['order_by']
@@ -24,7 +23,6 @@ def index(request):
 @login_required
 def create_deal(request, id=None):
     """this view function allow users to create a deal"""
-
     title = 'Create Deal'
 
     if id is None or int(id) == 0:

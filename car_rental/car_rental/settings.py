@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import dj_database_url
+import django_heroku
 from celery.schedules import crontab
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -21,12 +23,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'm$7zwytx3&$4oxd5s59-m%6r!o$bjk9q)h^qckna+vo#vfm!d5'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'm$7zwytx3&$4oxd5s59-m%6r!o$bjk9q)h^qckna+vo#vfm!d5')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if os.environ.get('ENV') == 'PRODUCTION':
+    DEBUG = False
+else:
+    DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['booshcar.herokuapp.com']
 
 
 # Application definition
@@ -42,10 +47,12 @@ INSTALLED_APPS = [
     'users',
     'bootstrap_datepicker_plus',
     'bootstrap3',
+    'storages',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -85,9 +92,9 @@ WSGI_APPLICATION = 'car_rental.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'booking',
-        'USER': 'root',
-        'PASSWORD': 'root',
+        'NAME': os.environ.get('NAME'),
+        'USER': os.environ.get('USER'),
+        'PASSWORD': os.environ.get('PASSWORD'),
         'HOST': '',
         'PORT': '5432',
     }
@@ -128,15 +135,26 @@ USE_TZ = True
 
 
 # CELERY STUFF
-BROKER_URL = 'redis://@localhost:6379'
+BROKER_URL = os.environ.get("CLOUDAMQP_URL", "django://")
+CELERY_RESULT_BACKEND = os.environ.get("CLOUDAMQP_URL", "django://")
+BROKER_POOL_LIMIT = 1
+BROKER_CONNECTION_MAX_RETRIES = None
+
+CELERY_TASK_SERIALIZER = "json"
+CELERY_ACCEPT_CONTENT = ["json", "msgpack"]
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+
+if BROKER_URL == "django://":
+    INSTALLED_APPS += ("kombu.transport.django",)
+"""BROKER_URL = 'redis://@localhost:6379'
 # List of modules to import when the Celery worker starts.
-CELERY_RESULT_BACKEND = 'redis://@localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://@localhost:6379'"""
 
 CELERY_BEAT_SCHEDULE = {
     'send-notification-every-day': {
         'task': 'booking.tasks.reservation_date',
         # Execute daily at midnight.
-        'schedule': crontab(),
+        'schedule': 10.0,
     },
 }
 
@@ -146,21 +164,42 @@ CELERY_BEAT_SCHEDULE = {
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
-
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 INTERNAL_IPS = ['127.0.0.1']
 
 # Media
+# Amazon Simple Storage Service (S3) to store media file
+# see https://devcenter.heroku.com/articles/s3 for more details
 
-MEDIA_URL = '/media/'
-
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "") 
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "")
+AWS_STORAGE_BUCKET_NAME = os.environ.get("S3_BUCKET_NAME", "")
+AWS_QUERYSTRING_AUTH = False
+AWS_S3_CUSTOM_DOMAIN = os.environ.get("AWS_S3_CUSTOM_DOMAIN", "")
+MEDIA_URL = os.environ.get("MEDIA_URL", "")
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
-
 LOGIN_URL = '/users/log_in/'
+
+
+if os.environ.get('ENV') == 'PRODUCTION':
+
+    # Static files settings
+    PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+    # Extra places for collectstatic to find static files.
+    STATICFILES_DIRS = (
+        os.path.join(BASE_DIR, 'static'),
+    )
+    
+    # Simplified static file serving.
+    # https://warehouse.python.org/project/whitenoise/
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+    db_from_env = dj_database_url.config(conn_max_age=500)
+    DATABASES['default'].update(db_from_env)
+
+django_heroku.settings(locals())
