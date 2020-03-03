@@ -1,3 +1,1 @@
-web: gunicorn car_rental.wsgi
-worker: python manage.py celery worker --loglevel=info
-celery_beat: python manage.py celery beat --loglevel=info
+web: env > .env; env PYTHONUNBUFFERED=true honcho start -f Procfile.real 2>&1
