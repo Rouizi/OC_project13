@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  <div>
+    <h2>Signup</h2>
+    <hr>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <form class="row signup" method="post">
+    {% csrf_token %}
+    {% for field in form %}
+    <p class="col-xs-12">
+      {{ field.label_tag }}<br>
+      {{ field }}<br>
+      {% for error in field.errors %}
+      <p class="col-xs-12 error">{{ error }}</p>
+      {% endfor %}
+    </p>
+    {% endfor %}
+    <button class="btn btn-primary submit" type="submit">Submit</button>
+  </form>
+{% endblock %}

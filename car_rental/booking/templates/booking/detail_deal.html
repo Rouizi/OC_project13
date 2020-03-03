@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  <div>
+    <h2>
+        {{ deal.name }}
+      {% if user.is_authenticated %}
+        {% if request.user == deal.user %}
+          <a class="btn btn-primary btn-md" href="{% url 'booking:update_deal' deal.id %}">Update</a>
+          <a class="btn btn-danger btn-md" href="{% url 'booking:delete_deal' deal.id %}">Delete</a>
+        {% else %}
+            {{ deal.id }}
+          <a class="btn btn-primary btn-md" href="{% url 'booking:reservations' deal.id %}">Reserve</a>
+        {% endif %}
+      {% endif %}
+    </h2>
+    <hr>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <a class="col-sm-4 col-xs-8 link-deal" href="#">
+      <img class="col-xs-12 img-deal" src="{{ deal.car_picture.url }}" alt="{{ deal.name }}" />
+    </a>
+    <div class="col-sm-8 col-xs-12">
+      <div class="row" style="margin-top: 10px;">
+        <p class="col-xs-12">
+          Owner: <a href="{% url 'users:profile' deal.user.username %}">{{ deal.user.username }}</a>
+            <strong>{{ deal.location }}</strong>
+        </p>
+        <p class="col-xs-12 hidden-xs">Created on : {{ deal.created_on }}</p>
+        <p class="col-xs-12">Energie: {{ deal.fuel }}</p>
+        <p class="col-xs-12">Mileage: {{ deal.mileage }} km</p>
+        <p class="col-xs-12">Price {{ deal.price }} €</p>
+        <p class="col-xs-12">{{ deal.description }}</p>
+      </div>
+    </div>
+  </div>
+{% endblock %}

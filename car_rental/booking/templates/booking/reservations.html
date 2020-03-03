@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  <div>
+    <h2>Reservations of deal {{ deal.name }}</h2>
+    <hr>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+        <div class="col-sm-8 col-xs-12">
+          <div class="row" style="margin-top: 10px;">
+            <p class="col-xs-12">
+              Owner: <a href="{% url 'users:profile' deal.user.username %}">{{ deal.user.username }}</a>
+              {{ car.location }}
+            </p>
+            <p class="col-xs-12 hidden-xs">Created on : {{ deal.created_at }}</p>
+            <p class="col-xs-12">Energie: {{ deal.fuel }}</p>
+            <p class="col-xs-12">Mileage: {{ deal.mileage }} km</p>
+            <p class="col-xs-12">Price {{ deal.price }} €</p>
+          </div>
+        </div>
+      {% load bootstrap3 %}
+      {% bootstrap_javascript jquery='full' %}
+      {{ form.media }}
+      <form class="col-sm-6 col-xs-8" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+            <p class="col-sm-6 col-xs-12" >{{ field.label_tag }}{{ field }}</p>
+            {% for error in field.errors %}
+                <p class="col-xs-12 error">{{ error }}</p>
+            {% endfor %}
+        {% endfor %}
+        <button class="btn btn-primary submit" type="submit">Submit</button>
+      </form>
+  </div>
+{% endblock %}
