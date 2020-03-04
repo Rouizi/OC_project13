@@ -178,8 +178,8 @@ AWS_STORAGE_BUCKET_NAME = os.environ.get("S3_BUCKET_NAME", "")
 AWS_QUERYSTRING_AUTH = False
 AWS_S3_CUSTOM_DOMAIN = os.environ.get("AWS_S3_CUSTOM_DOMAIN", "")
 
-# MEDIA_URL = os.environ.get("MEDIA_URL", "")
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_URL = os.environ.get("MEDIA_URL", "")
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
