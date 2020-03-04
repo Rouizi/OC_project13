@@ -21,5 +21,9 @@ class Migration(migrations.Migration):
             field=models.DateTimeField(auto_now_add=True, default='2020-02-01'),
             preserve_default=False,
         ),
-        
+        migrations.AlterField(
+            model_name='createdeal',
+            name='available',
+            field=models.BooleanField(default=True),
+        ),
     ]
