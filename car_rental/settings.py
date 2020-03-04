@@ -172,12 +172,12 @@ INTERNAL_IPS = ['127.0.0.1']
 # see https://devcenter.heroku.com/articles/s3 for more details
 
 # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-"""AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "") 
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "") 
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("S3_BUCKET_NAME", "")
 AWS_QUERYSTRING_AUTH = False
 AWS_S3_CUSTOM_DOMAIN = os.environ.get("AWS_S3_CUSTOM_DOMAIN", "")
-
+"""
 MEDIA_URL = os.environ.get("MEDIA_URL", "")
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 AWS_S3_OBJECT_PARAMETERS = {
@@ -191,11 +191,7 @@ DEFAULT_FILE_STORAGE = 'car_rental.storage_backends.MediaStorage'"""
 
 ############################################################################
 # aws settings
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME')
 AWS_DEFAULT_ACL = None
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
 # s3 static settings
 STATIC_LOCATION = 'static'
