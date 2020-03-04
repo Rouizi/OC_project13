@@ -16,6 +16,7 @@ def index(request):
     if 'order_by' in request.GET:
         order_by = request.GET['order_by']
         all_deals = CreateDeal.objects.filter(available=True).order_by(order_by)
+
     
     return render(request, 'base.html', {'all_deals': all_deals, 'description': description})
 
