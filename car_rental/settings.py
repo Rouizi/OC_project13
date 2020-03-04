@@ -26,10 +26,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('SECRET_KEY', 'm$7zwytx3&$4oxd5s59-m%6r!o$bjk9q)h^qckna+vo#vfm!d5')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-if os.environ.get('ENV') == 'PRODUCTION':
+"""if os.environ.get('ENV') == 'PRODUCTION':
     DEBUG = False
-else:
-    DEBUG = True
+else:"""
+DEBUG = True
 
 ALLOWED_HOSTS = ['booshcar.herokuapp.com']
 
@@ -207,6 +207,15 @@ MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 DEFAULT_FILE_STORAGE = 'car_rental.storage_backends.PublicMediaStorage'
 ############################################################################
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Extra places for collectstatic to find static files.
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
 
 
 LOGIN_URL = '/users/log_in/'
