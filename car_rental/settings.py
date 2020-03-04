@@ -26,10 +26,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('SECRET_KEY', 'm$7zwytx3&$4oxd5s59-m%6r!o$bjk9q)h^qckna+vo#vfm!d5')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-"""if os.environ.get('ENV') == 'PRODUCTION':
+if os.environ.get('ENV') == 'PRODUCTION':
     DEBUG = False
-else:"""
-DEBUG = True
+else:
+    DEBUG = True
 
 ALLOWED_HOSTS = ['booshcar.herokuapp.com']
 
@@ -171,8 +171,8 @@ INTERNAL_IPS = ['127.0.0.1']
 # Amazon Simple Storage Service (S3) to store media file
 # see https://devcenter.heroku.com/articles/s3 for more details
 
-#DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "") 
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+"""AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "") 
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("S3_BUCKET_NAME", "")
 AWS_QUERYSTRING_AUTH = False
@@ -187,7 +187,26 @@ AWS_S3_OBJECT_PARAMETERS = {
 AWS_LOCATION = 'static'
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
-DEFAULT_FILE_STORAGE = 'car_rental.storage_backends.MediaStorage'
+DEFAULT_FILE_STORAGE = 'car_rental.storage_backends.MediaStorage'"""
+
+############################################################################
+# aws settings
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_DEFAULT_ACL = None
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+# s3 static settings
+STATIC_LOCATION = 'static'
+STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
+STATICFILES_STORAGE = 'car_rental.storage_backends.StaticStorage'
+# s3 public media settings
+PUBLIC_MEDIA_LOCATION = 'media'
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
+DEFAULT_FILE_STORAGE = 'car_rental.storage_backends.PublicMediaStorage'
+############################################################################
+
 
 LOGIN_URL = '/users/log_in/'
 
@@ -195,7 +214,7 @@ LOGIN_URL = '/users/log_in/'
 if os.environ.get('ENV') == 'PRODUCTION':
 
     # Static files settings
-    PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+    """PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
@@ -206,7 +225,7 @@ if os.environ.get('ENV') == 'PRODUCTION':
     
     # Simplified static file serving.
     # https://warehouse.python.org/project/whitenoise/
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'"""
 
     db_from_env = dj_database_url.config(conn_max_age=500)
     DATABASES['default'].update(db_from_env)
