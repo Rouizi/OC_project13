@@ -200,7 +200,7 @@ STATICFILES_STORAGE = 'car_rental.storage_backends.StaticStorage'
 # s3 public media settings
 PUBLIC_MEDIA_LOCATION = 'media'
 MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+"""MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')"""
 DEFAULT_FILE_STORAGE = 'car_rental.storage_backends.PublicMediaStorage'
 ############################################################################
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
