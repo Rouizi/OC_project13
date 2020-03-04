@@ -26,10 +26,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('SECRET_KEY', 'm$7zwytx3&$4oxd5s59-m%6r!o$bjk9q)h^qckna+vo#vfm!d5')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-"""if os.environ.get('ENV') == 'PRODUCTION':
+if os.environ.get('ENV') == 'PRODUCTION':
     DEBUG = False
-else:"""
-DEBUG = True
+else:
+    DEBUG = True
 
 ALLOWED_HOSTS = ['booshcar.herokuapp.com']
 
