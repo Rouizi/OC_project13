@@ -162,7 +162,7 @@ CELERY_BEAT_SCHEDULE = {
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-#STATIC_URL = '/static/'
+STATIC_URL = '/static/'
 
 
 INTERNAL_IPS = ['127.0.0.1']
@@ -198,9 +198,9 @@ AWS_DEFAULT_ACL = None
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
 # s3 static settings
-STATIC_LOCATION = 'static'
+"""STATIC_LOCATION = 'static'
 STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
-STATICFILES_STORAGE = 'car_rental.storage_backends.StaticStorage'
+STATICFILES_STORAGE = 'car_rental.storage_backends.StaticStorage'"""
 # s3 public media settings
 PUBLIC_MEDIA_LOCATION = 'media'
 MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
@@ -214,7 +214,7 @@ LOGIN_URL = '/users/log_in/'
 if os.environ.get('ENV') == 'PRODUCTION':
 
     # Static files settings
-    """PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+    PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
@@ -225,7 +225,7 @@ if os.environ.get('ENV') == 'PRODUCTION':
     
     # Simplified static file serving.
     # https://warehouse.python.org/project/whitenoise/
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'"""
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
     db_from_env = dj_database_url.config(conn_max_age=500)
     DATABASES['default'].update(db_from_env)
