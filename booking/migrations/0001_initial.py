@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('car_picture', models.ImageField(upload_to='car_picture')),
                 ('description', models.TextField()),
                 ('price', models.PositiveSmallIntegerField()),
-                ('available', models.DateField(default=datetime.date.today)),
+                ('available', models.BooleanField(default=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
