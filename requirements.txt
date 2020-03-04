@@ -19,7 +19,6 @@ jmespath==0.9.5
 kombu==4.6.8
 mysqlclient==1.4.6
 Pillow==6.2.1
-pkg-resources==0.0.0
 psycopg2==2.8.4
 pycodestyle==2.5.0
 python-dateutil==2.8.1
