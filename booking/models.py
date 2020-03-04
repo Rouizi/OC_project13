@@ -10,7 +10,7 @@ class CreateDeal(models.Model):
     mileage = models.PositiveIntegerField(db_index=True)
     phone_number = models.CharField(max_length=17) 
     location = models.CharField(max_length=100, db_index=True)
-    car_picture = models.ImageField(upload_to='car_picture')
+    car_picture = models.ImageField()
     description = models.TextField()
     price = models.PositiveSmallIntegerField(db_index=True)
     available = models.BooleanField(default=True)
