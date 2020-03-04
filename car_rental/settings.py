@@ -146,23 +146,14 @@ CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
 if BROKER_URL == "django://":
     INSTALLED_APPS += ("kombu.transport.django",)
-"""BROKER_URL = 'redis://@localhost:6379'
-# List of modules to import when the Celery worker starts.
-CELERY_RESULT_BACKEND = 'redis://@localhost:6379'"""
 
 CELERY_BEAT_SCHEDULE = {
     'send-notification-every-day': {
         'task': 'booking.tasks.reservation_date',
         # Execute daily at midnight.
-        'schedule': 10.0,
+        'schedule': crontab(minute=0, hour=0),
     },
 }
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.11/howto/static-files/
-
-# STATIC_URL = '/static/'
 
 
 INTERNAL_IPS = ['127.0.0.1']
@@ -171,25 +162,12 @@ INTERNAL_IPS = ['127.0.0.1']
 # Amazon Simple Storage Service (S3) to store media file
 # see https://devcenter.heroku.com/articles/s3 for more details
 
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "") 
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("S3_BUCKET_NAME", "")
 AWS_QUERYSTRING_AUTH = False
 AWS_S3_CUSTOM_DOMAIN = os.environ.get("AWS_S3_CUSTOM_DOMAIN", "")
-"""
-MEDIA_URL = os.environ.get("MEDIA_URL", "")
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',
-}
 
-AWS_LOCATION = 'static'
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
-DEFAULT_FILE_STORAGE = 'car_rental.storage_backends.MediaStorage'"""
-
-############################################################################
 # aws settings
 AWS_DEFAULT_ACL = None
 AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
@@ -200,18 +178,7 @@ STATICFILES_STORAGE = 'car_rental.storage_backends.StaticStorage'
 # s3 public media settings
 PUBLIC_MEDIA_LOCATION = 'media'
 MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
-"""MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')"""
 DEFAULT_FILE_STORAGE = 'car_rental.storage_backends.PublicMediaStorage'
-############################################################################
-PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# Extra places for collectstatic to find static files.
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
-
 
 
 LOGIN_URL = '/users/log_in/'
