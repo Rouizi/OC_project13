@@ -1,7 +1,5 @@
 # OC_project13
 
-This project is the final project of the [openclassrooms path](https://openclassrooms.com/fr/paths/68-developpeur-dapplication-python).
-
 The website allows you to rent cars between individuals, you can visit it at the following address: https://booshcar.herokuapp.com/
 
 ## Functionalities
